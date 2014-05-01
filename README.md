@@ -60,9 +60,9 @@ That's all! Now you have a full working slider in your site.
 ```javascript
 
 .Unislider({
-        captionMode: 'center',
-	effect: '',
-	dataTitleSize: '20px'
+captionMode: 'center', // Values :'center' and ''
+			effect: '', // Effect: 'gray'
+			dataTitleSize: '20px' // Size of title
 		});
 ```
  			
