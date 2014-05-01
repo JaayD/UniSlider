@@ -55,5 +55,17 @@ That's all! Now you have a full working slider in your site.
 		});
 ```
 
+###New settings
+
+```javascript
+
+.Unislider({
+        captionMode: 'center',
+	effect: '',
+	dataTitleSize: '20px'
+		});
+```
+ 			
+
 
 
