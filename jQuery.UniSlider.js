@@ -27,7 +27,10 @@
 			caption: true, // Set caption: True or false (false: no caption)
 			handler: 'click', // Set handler: Available values: 'click' and 'auto'. Auto will move the images constantly without interaction with user.
 			border: 'none', // Set border of slider - Available values: normal css values, to example: '1px solid black'
-			displaybuttons: 'block' // Show or not buttons. Normal css values, to example: 'none','block'
+			displaybuttons: 'block', // Show or not buttons. Normal css values, to example: 'none','block'
+			captionMode: 'center', // Values :'center' and ''
+			effect: '', // Effect: 'gray'
+			dataTitleSize: '20px' // Size of title
 		},options);
 
 		return this.each(function(){
@@ -96,7 +99,16 @@ for(s=0;s<elemLength;s++){
 //END
 //CSS OF FOCUS DIV
 
-			var windowWidth = elem.outerWidth();
+				var windowWidth = 0;
+			
+			if(settings.width === '100%'){
+				console.log('yes');
+			var windowWidth = $(window).outerWidth();
+			console.log(windowWidth);
+			}else{
+				windowWidth = elem.outerWidth();
+			}
+//END
 			var elemWidth = windowWidth / length;
 				console.log(windowWidth);
 
@@ -123,8 +135,14 @@ for(s=0;s<elemLength;s++){
 					backgroundPosition: 'center center'
 					
 					 });
+
 			}
 			
+			if(settings.effect == 'highlight'){
+				$(imgClass).append('<div class="highlight-'+settings.class+'"></div>')
+				$('.highlight-'+settings.class).css({width:'100%',height:'100%',backgroundColor:'rgba(0,0,0,0.4)'});
+			}
+
 			$(imgClass).css({height:settings.height});
 //END
 
@@ -141,20 +159,21 @@ for(s=0;s<elemLength;s++){
 //END
 //APPEND CAPTION 
 console.log($(window).outerWidth());
-			if(settings.caption == true) {
+			if(settings.caption) {
+
+
+					var capCSS = [{width:'100%',
+									color:'white',
+									bottom: 0,
+					right:0,
+					position: 'absolute'}];
+
 
 			for(i=0;i<length;i++){
 				$(imgClass+'_'+i).append('<div id="caption-'+i+'" class="caption-'+settings.class+'"><div class="header-'+settings.class+'">'+arrTitle[i]+'</div><div class="text-'+settings.class+'">'+arrAlt[i]+'</div></div>');
 				$('.caption-'+settings.class).hide();
-
-				$('.caption-'+settings.class).css({
-					width:'100%',
-					color: 'white',
-					background: 'rgba(0,0,0,0.5)',
-					bottom: 0,
-					right:0,
-					position: 'absolute'
-				});
+				if(settings.captionMode != 'center'){
+				$('.caption-'+settings.class).css(capCSS);
 				$('.header-'+settings.class).css({
 					fontFamily: 'arial',
 					fontSize:'18px',
@@ -167,7 +186,31 @@ console.log($(window).outerWidth());
 					padding:'5px',
 					marginLeft:'10px'
 				});
+			}else {$('.caption-'+settings.class).css({
+					width:'100%',
+					color: 'white',
+					textAlign: 'center',
+					top:'30%',
+					position: 'absolute',
+					 
+				});
+				$('.header-'+settings.class).css({
+					fontFamily: 'Arial, sans-serif',
+					fontSize:settings.dataTitleSize,
+					textShadow:'0px 0px 10px black'
+				});
+				$('.text-'+settings.class).css({
+					fontFamily: 'verdana',
+					fontSize:'14px',
+					padding:'5px',
+					color:'#ededed'
+				});}
 			}
+
+			if(settings.effect == 'gray'){
+
+				$(imgClass).css({webkitFilter:'grayscale(100%)'})
+			} 
 
 			}
 
@@ -176,19 +219,19 @@ console.log($(window).outerWidth());
 
 			if(settings.handler == 'click'){
 				
-				elem.append('<div class="focuButton-'+settings.class+' leftfocuButton-'+settings.class+'"><</div>');
-				elem.append('<div class="focuButton-'+settings.class+' rightfocuButton-'+settings.class+'">></div>');
+				elem.append('<div class="focuButton-'+settings.class+' leftfocuButton-'+settings.class+'">Left</div>');
+				elem.append('<div class="focuButton-'+settings.class+' rightfocuButton-'+settings.class+'">Right</div>');
 
 				$('.focuButton-'+settings.class).css({
 					position: 'absolute',
 					background: 'rgba(0,0,0,0.5)',
 					padding:'8px',
-					top:'50%',
-					borderRadius:'20px',
+					bottom:0,
+					borderTopLeft:'20px',
 					fontSize: '12px',
 					fontFamily: 'verdana',
 					color: 'white',
-					border: '1px solid rgba(255,255,255,0.5)',
+					border: '1px solid rgba(255,255,255,0.2)',
 					cursor:'pointer',
 					display: settings.displaybuttons
 				});
@@ -203,6 +246,7 @@ console.log($(window).outerWidth());
 				var timeoutClick;
 				var activeClass = 'active-'+settings.class;			
 			$('.'+settings.class+':first').next(imgClass).addClass(activeClass);
+			$('.caption-'+settings.class+':first').slideToggle(500);
 
 				timeoutClick = setTimeout(function(){$('.rightfocuButton-'+settings.class).trigger('click');},5000);
 //NEXT IMG
@@ -214,9 +258,9 @@ console.log($(window).outerWidth());
 		
 					$('.active-'+settings.class).prevAll(imgClass).each(function(){
 						var goLeft = -1 - $(this).width();
-						$(this).animate({left: goLeft},500,function(){
+						$(this).animate({left: goLeft},1000,function(){
 							$('.caption-'+settings.class, this).fadeOut(100);
-							$(this).css({left:totalleft});
+							$(this).css({left:windowWidth});
 							$(this).insertAfter('.'+settings.class+':last');
 						});
 
@@ -224,7 +268,7 @@ console.log($(window).outerWidth());
 
 
 
-					$('.active-'+settings.class).animate({left:middleLeftIMG},500,function(){
+					$('.active-'+settings.class).animate({left:middleLeftIMG},800,function(){
 						$('.caption-'+settings.class, this).slideToggle(500);
 						$(this).removeClass(activeClass).next(imgClass).addClass(activeClass);
 						$('.rightfocuButton-'+settings.class).on('click',leftMove);
